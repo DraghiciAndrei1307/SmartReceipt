@@ -14,7 +14,7 @@
 ## 📝 Description
 ## 🗺️ Roadmap
 
-### Milestone 1 - OCR
+### 🔎 Milestone 1 - OCR
 
 Input: 
 
@@ -31,7 +31,7 @@ PAINE 4.99
 TOTAL 12.48
 ```
 
-### Milestone 2 - Image Preprocessing
+### 🖼️ Milestone 2 - Image Preprocessing
 
 ```commandline
   Photo
@@ -58,7 +58,7 @@ original image -> OCR accuracy
         vs
 preprocessed image -> accuracy
 ```
-### Milestone 3 - OCR Data Model
+### 📦 Milestone 3 - OCR Data Model
 
 Transform the OCR result into a Python data model.
 
@@ -77,7 +77,7 @@ Transform the OCR result into a Python data model.
 ]
 ```
 
-### Milestone 4 - Receipt parser
+### 🧠 Milestone 4 - Receipt parser
 
 Create the JSON output using a deterministic, rule-based parser.
 
@@ -104,7 +104,7 @@ Create the JSON output using a deterministic, rule-based parser.
 }
 ```
 
-### Milestone 5 - Receipt schema
+### 🧾 Milestone 5 - Receipt schema
 
 Define the structure of a receipt using a Python data model:
 
@@ -122,7 +122,7 @@ Receipt
 └── total
 ```
 
-### Milestone 6 - Validation
+### ✅ Milestone 6 - Validation
 
 Here we check if the result makes sense:
 
@@ -143,7 +143,7 @@ currency valid?
 confidence suficient?
 ```
 
-### Milestone 7 - AI
+### 🤖 Milestone 7 - AI
 
 This milestone will add an AI-based parser/extractor which will replace or enhance the logic from Milestone 4
 
