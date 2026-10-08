@@ -1,31 +1,32 @@
-# SmartReceipt
+# 🧾 SmartReceipt
 
-## Contents
+## 📑 Contents
 
-- Description
-- Roadmap
-- Tech Stack used
-- Demo
-- Resources
-- Commit guidelines
-
-
-## Description
+- 📝 Description
+- 🗺️ Roadmap
+- 🛠️ Tech Stack used
+- 🎥 Demo
+- 📚 Resources
+- 
+- 💬Commit guidelines
 
 
+## 📝 Description
 
-## Roadmap
-## Tech Stack used
-## Demo
-## Resources
 
-## Commit guidelines
+
+## 🗺️ Roadmap
+## 🛠️ Tech Stack used
+## 🎥 Demo
+## 📚 Resources
+
+## 💬 Commit guidelines
 
 This project follows a consistent commit message format:
 
 `````<type>(<scope>): <short_description>`````
 
-### Commit Types
+### 🏷️ Commit Types
 
 - feat -- add a new feature
 - fix -- fix a bug
@@ -35,7 +36,7 @@ This project follows a consistent commit message format:
 - chore -- maintenance tasks, dependencies, configuration, etc.
 - init -- project initialization
 
-### Examples
+### 💡 Examples
 
 ```commandline
 feat(ocr): add receipt text extraction 
@@ -47,7 +48,7 @@ chore(deps): update dependencies
 init(project): initialize the project
 ```
 
-### Rules
+### 📏 Rules
 
 - `<type>` must be one of the types listed above
 - `<scope>` should identify the component or area affected by the changes
