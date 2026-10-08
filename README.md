@@ -20,6 +20,43 @@
 ## 🎥 Demo
 ## 📚 Resources
 
+## Branch Naming Guidelines
+
+This project follows a consistent branch naming convention:
+
+```<type>/<short-description>```
+
+### Branch types
+
+- feat -- add a new feature
+- fix -- fix a bug
+- docs -- documentation changes
+- refactor -- code changes that do not add features or fix bugs
+- test -- add or modify tests
+- chore -- maintenance tasks, dependencies, configuration, etc.
+
+### Examples
+
+```commandline
+feat/receipt-ocr 
+feat/image-preprocessing 
+fix/empty-receipt 
+fix/ocr-confidence 
+docs/setup-guide 
+refactor/receipt-parser 
+test/receipt-parser 
+chore/update-dependencies
+```
+
+### Rules
+
+- `<type>` must be one of the types listed above.
+- Use lowercase for the branch type and description.
+- Separate words in `<short-description>` with hyphens `(-)`.
+- Keep the description short and descriptive.
+- Avoid unnecessary words or implementation details.
+- Do not use spaces, underscores, or special characters in the branch name.
+
 ## 💬 Commit guidelines
 
 This project follows a consistent commit message format:
