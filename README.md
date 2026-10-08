@@ -7,26 +7,23 @@
 - 🛠️ Tech Stack used
 - 🎥 Demo
 - 📚 Resources
-- 
+- 🌿 Branch Naming Guidelines
 - 💬Commit guidelines
 
 
 ## 📝 Description
-
-
-
 ## 🗺️ Roadmap
 ## 🛠️ Tech Stack used
 ## 🎥 Demo
 ## 📚 Resources
 
-## Branch Naming Guidelines
+## 🌿 Branch Naming Guidelines
 
 This project follows a consistent branch naming convention:
 
 ```<type>/<short-description>```
 
-### Branch types
+### 🏷️ Branch types
 
 - feat -- add a new feature
 - fix -- fix a bug
@@ -35,7 +32,7 @@ This project follows a consistent branch naming convention:
 - test -- add or modify tests
 - chore -- maintenance tasks, dependencies, configuration, etc.
 
-### Examples
+### 💡 Examples
 
 ```commandline
 feat/receipt-ocr 
@@ -48,7 +45,7 @@ test/receipt-parser
 chore/update-dependencies
 ```
 
-### Rules
+### 📏 Rules
 
 - `<type>` must be one of the types listed above.
 - Use lowercase for the branch type and description.
