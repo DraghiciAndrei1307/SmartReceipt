@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
+    hooks:
+      - id: ruff
+
+  - repo: local
+    hooks:
+      - id: commit-message
+        name: Check commit message
+        entry: python scripts/check_commit_message.py
+        language: python
+        stages: [commit-msg]
