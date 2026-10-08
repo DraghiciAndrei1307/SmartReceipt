@@ -1,15 +1,14 @@
 name: Roadmap Demo
 
 on:
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
   roadmap:
     name: Roadmap
     runs-on: ubuntu-latest
+
+    if: github.ref_name == 'main' || github.ref_name == 'dev'
 
     permissions:
       contents: read
