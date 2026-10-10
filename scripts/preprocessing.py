@@ -1,6 +1,7 @@
 import cv2
 
-from ocr import ocr
+#from ocr import ocr
+
 
 def extract_source_image_name_and_folder_path(image_path: str):
     """
@@ -73,12 +74,84 @@ def resize_image(image_path: str):
 
     cv2.imwrite(resized_image_path, resized_image)
 
+def cut_receipt(image_path: str):
+    """
+    This function is used cut an image after we rotated it.
+    """
+
+    # Extract the source image name and the parent folder path of the image_path
+
+    (
+        source_image_name,
+        parent_folder_path
+    ) = extract_source_image_name_and_folder_path(image_path)
+
+    image = cv2.imread(image_path)
+
+    # Convert image to GrayScale
+
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    edged = cv2.Canny(gray, 20, 30, apertureSize=5, L2gradient=True)
+
+    edged_image_path = (
+            parent_folder_path +
+            '/edged_image.jpeg'
+    )
+
+    cv2.imshow('Canny Edges After Contouring', edged)
+    cv2.waitKey(0)
+
+    cv2.imwrite(edged_image_path, edged)
+
+    contours, hierarchy = cv2.findContours(
+        edged,
+        cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_NONE
+    )
+
+    print("Number of Contours Found = " + str(len(contours)))
+
+    print("Hierarchy: " + str(hierarchy))
+
+    contour_areas = []
+
+    for contour in contours:
+        contour_areas.append((cv2.contourArea(contour)))
+
+    max_area = max(contour_areas)
+
+    index = contour_areas.index(max_area)
+
+    print("The max area can be found at: " + str(index))
+
+    print("Max area contour=" + str(max(contour_areas)))
+
+    x,y,w,h = cv2.boundingRect(contours[index])
+
+    print("X=" + str(x))
+    print("Y=" + str(y))
+    print("W=" + str(w))
+    print("H=" + str(h))
+
+    cv2.drawContours(image, contours, index, (0, 255, 0), 3)
+
+    cv2.imshow('Contours', image)
+    cv2.waitKey(0)
+
+    image = image[y:y+h, x:x+w]
+
+    cv2.imshow('Contours', image)
+    cv2.waitKey(0)
+
 if __name__ == '__main__':
 
     # rotate_90_counter_clockwise("./input_images/image_1_starbucks.jpeg")
 
     # resize_image("./input_images/image_1_starbucks.jpeg")
 
-    print(ocr("./input_images/image_1_starbucks.jpeg"))
-    print(ocr("./input_images/image_1_starbucks_rotated_90_counter_clockwise.jpeg"))
-    print(ocr("./input_images/resized_image.jpeg"))
+    # print(ocr("./input_images/image_1_starbucks.jpeg"))
+    # print(ocr("./input_images/image_1_starbucks_rotated_90_counter_clockwise.jpeg"))
+    # print(ocr("./input_images/resized_image.jpeg"))
+
+    cut_receipt("./input_images/image_1_starbucks_rotated_90_counter_clockwise.jpeg")
