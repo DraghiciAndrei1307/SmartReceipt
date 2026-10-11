@@ -15,8 +15,9 @@ def extract_source_image_name_and_folder_path(image_path: str):
 
 def rotate_90_counter_clockwise(image_path: str):
     """
-    This function rotates 90 degree
-    counterclockwise around the origin.
+    This function rotates the image 90 degree counterclockwise
+    around the origin and writes it. Also, it returns the
+    modified image.
     """
 
     # Extract the source image name and the parent folder path of the image_path
@@ -31,31 +32,26 @@ def rotate_90_counter_clockwise(image_path: str):
     # Rotate image counterclockwise with 90 degrees around the origin
     rotated_image = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-    # Generate rotated image new path
-    rotated_image_path = (
-            source_image_folder_path +
-            '/' +
-            source_image_name.split(".")[0] +
-            "_rotated_90_counter_clockwise." +
-            source_image_name.split(".")[1]
+    _ = show_and_write_image(
+        parent_folder_path=source_image_folder_path,
+        source_image_name=source_image_name,
+        operation_applied="rotate_90_counterclockwise",
+        image=rotated_image
     )
 
-    # Save rotated image
-    cv2.imwrite(rotated_image_path, rotated_image)
-
-    # We return the rotated image path and its parent folder path.
-    # For the moment, we keep everything inside the same folder.
-    return rotated_image, rotated_image_path, source_image_folder_path
+    return rotated_image
 
 def rotate_90_counter_clockwise_and_resize_image(image_path: str):
     """This function is used resize an image."""
 
-    # Rotate image with 90 degrees counterclockwise around the origin
+    # Extract the source image name and the parent folder path of the image_path
     (
-        rotated_image,
-        rotated_image_path,
-        parent_folder_path
-    ) = rotate_90_counter_clockwise(image_path)
+        source_image_name,
+        source_image_folder_path
+    ) = extract_source_image_name_and_folder_path(image_path)
+
+    # Rotate image with 90 degrees counterclockwise around the origin
+    rotated_image = rotate_90_counter_clockwise(image_path)
 
     # Resize using specific scale factors on both X and Y axis
 
@@ -67,14 +63,16 @@ def rotate_90_counter_clockwise_and_resize_image(image_path: str):
         interpolation=cv2.INTER_CUBIC
     )
 
-    resized_image_path = (
-            parent_folder_path +
-            '/rotated_90_counterclockwise_and_resized.jpeg'
+    _ = show_and_write_image(
+        parent_folder_path=source_image_folder_path,
+        source_image_name= source_image_name,
+        operation_applied="rotate_90_counterclockwise_resize",
+        image=resized_image
     )
 
-    cv2.imwrite(resized_image_path, resized_image)
+    return resized_image
 
-def resize_image(image_path: str):
+def resize(image_path: str):
     # Extract the source image name and the parent folder path of the image_path
     (
         source_image_name,
@@ -94,26 +92,76 @@ def resize_image(image_path: str):
         interpolation=cv2.INTER_CUBIC
     )
 
-    resized_image_path = (
-            source_image_folder_path +
-            '/'+
-            source_image_name.split(".")[0] +
-            '_resized_image.jpeg'
+    _ = show_and_write_image(
+        parent_folder_path=source_image_folder_path,
+        source_image_name=source_image_name,
+        operation_applied="resize",
+        image=resized_image
     )
 
-    cv2.imwrite(resized_image_path, resized_image)
+    return resized_image
 
-def convert_to_grayscale(image):
-    """This function is used convert an image to grayscale."""
-    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+def grayscale(image_path: str):
 
-def apply_threshold(image):
-    """This function is used apply a threshold to an image."""
-    _, thresh = cv2.threshold(
-        image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
+    """
+    This function reads the image, applies grayscale and writes it.
+    Also, it returns the modified image.
+    """
+
+
+    # Extract the source image name and the parent folder path of the image_path
+    (
+        source_image_name,
+        source_image_folder_path
+    ) = extract_source_image_name_and_folder_path(image_path)
+
+    # Read image from image_path, using cv2.imread(...)
+    image = cv2.imread(image_path)
+
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    show_and_write_image(
+        parent_folder_path=source_image_folder_path,
+        source_image_name=source_image_name,
+        operation_applied="gray",
+        image=gray
     )
 
-    return thresh
+    return gray
+
+def thresh(image_path: str):
+    """
+    This function reads the image, applies threshold and writes it.
+    Also, it returns the modified image.
+    """
+
+    # Extract the source image name and the parent folder path of the image_path
+    (
+        source_image_name,
+        source_image_folder_path
+    ) = extract_source_image_name_and_folder_path(image_path)
+
+    # Convert the image to Grayscale
+
+    gray = grayscale(image_path)
+
+    # Apply thresh
+    _, threshed_image = cv2.threshold(
+        gray,
+        0,
+        255,
+        cv2.THRESH_BINARY + cv2.THRESH_OTSU
+    )
+
+    # Write image
+    _ = show_and_write_image(
+        parent_folder_path=source_image_folder_path,
+        source_image_name=source_image_name,
+        operation_applied="thresh",
+        image=threshed_image
+    )
+
+    return threshed_image
 
 def show_and_write_image(
         parent_folder_path: str,
@@ -129,7 +177,7 @@ def show_and_write_image(
             '/' + source_image_name.split(".")[0] +
             "_" +
             operation_applied +
-            "_image.jpeg"
+            ".jpeg"
     )
 
     # Show the image and destroy it after user presses key
@@ -140,14 +188,15 @@ def show_and_write_image(
     # Write the image at the desired path
     cv2.imwrite(result_image_path, image)
 
+    return result_image_path
 
-def cut_receipt(image_path: str):
+def cut(image_path: str):
     """
-    This function is used cut an image after we rotated it.
+    This function reads the image, cuts it and writes it.
+    Also, it returns the path to the modified image.
     """
 
     # Extract the source image name and the parent folder path of the image_path
-
     (
         source_image_name,
         parent_folder_path
@@ -155,35 +204,34 @@ def cut_receipt(image_path: str):
         extract_source_image_name_and_folder_path(image_path)
     )
 
+    # Read image from image_path, using cv2.imread(...)
     image = cv2.imread(image_path)
 
     # Convert image to GrayScale
+    gray = grayscale(image_path)
 
-    gray = convert_to_grayscale(image)
-
-    show_and_write_image(
+    _ = show_and_write_image(
         parent_folder_path=parent_folder_path,
         source_image_name=source_image_name,
         operation_applied="gray",
         image=gray
     )
 
-    # Apply Thresholding
+    # Apply Thresholding (also performs Grayscaling)
+    threshed = thresh(image_path)
 
-    thresh = apply_threshold(gray)
-
-    show_and_write_image(
+    _ = show_and_write_image(
         parent_folder_path=parent_folder_path,
         source_image_name=source_image_name,
         operation_applied="thresh",
-        image=thresh
+        image=threshed
     )
 
     # Apply the Canny edge detection algorithm
 
-    edged = cv2.Canny(thresh, 30, 200, apertureSize=3, L2gradient=False)
+    edged = cv2.Canny(threshed, 30, 200, apertureSize=3, L2gradient=False)
 
-    show_and_write_image(
+    _ = show_and_write_image(
         parent_folder_path=parent_folder_path,
         source_image_name=source_image_name,
         operation_applied="edged",
@@ -256,7 +304,7 @@ def cut_receipt(image_path: str):
 
     # Cut the raw image
     image = image[y:y+h, x:x+w]
-    show_and_write_image(
+    _ = show_and_write_image(
         parent_folder_path=parent_folder_path,
         source_image_name=source_image_name,
         operation_applied="cut",
@@ -265,26 +313,37 @@ def cut_receipt(image_path: str):
 
     # Cut the gray image
     gray = gray[y:y+h, x:x+w]
-    show_and_write_image(
+
+    _ = show_and_write_image(
         parent_folder_path=parent_folder_path,
         source_image_name=source_image_name,
-        operation_applied="gray_and_cut",
+        operation_applied="gray_cut",
         image=gray
     )
 
     # Cut the threshed image
-    thresh = thresh[y:y+h, x:x+w]
-    show_and_write_image(
+    threshed = threshed[y:y+h, x:x+w]
+
+    _ = show_and_write_image(
         parent_folder_path=parent_folder_path,
         source_image_name=source_image_name,
-        operation_applied="thresh_and_cut",
-        image=thresh
+        operation_applied="thresh_cut",
+        image=threshed
     )
 
+    return image
 
 if __name__ == '__main__':
 
-    cut_receipt("./input_images/image_1_jumbo.jpeg")
-    resize_image("./input_images/image_1_jumbo_cut_image.jpeg")
 
-    print(ocr("./input_images/image_1_jumbo_cut_image_resized_image.jpeg"))
+    cut_image = cut("./input_images/image_1_jumbo.jpeg")
+    resized_image = resize("./input_images/image_1_jumbo_cut.jpeg")
+    _ = grayscale("./input_images/image_1_jumbo_cut_resize.jpeg")
+    _ = thresh("./input_images/image_1_jumbo_cut_resize.jpeg")
+
+    print(ocr("./input_images/image_1_jumbo.jpeg"))
+    print(ocr("./input_images/image_1_jumbo_cut_resize.jpeg"))
+    print(ocr("./input_images/image_1_jumbo_cut_resize_gray.jpeg"))
+    print(ocr("./input_images/image_1_jumbo_cut_resize_thresh.jpeg"))
+
+
