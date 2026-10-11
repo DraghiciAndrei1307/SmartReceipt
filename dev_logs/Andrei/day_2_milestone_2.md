@@ -43,6 +43,16 @@ Result comparison:
 ```commandline
 ['JUMBO', 'EC R', 'SRI', 'STR . COMERTULUI', 'NR', '7 ,SAT', 'DOMNESTI', 'COM', 'DOMNVEST [', 'JUD', 'ILFOV', 'TEL', '021', '2021360', 'COD', 'IDENTIFICARE', 'FISCALA', 'K0189/1652', '20', 'CUTITARU', 'POS/TRAN :', '011/', '216', 'Lel', '1', 'OOO', 'BUC', 'X', '1.99', 'CARIVET', 'A7', 'S0F', 'ROTI', 'SPI', '1 , 99', '55242800003//1252812', '1', 'o0O', 'BUC', 'X', '1 , 49', 'ETICHETE', 'AUTOCOL', 'IOFX6s', '1', '49', '548048000038/1240477', '1', 'OOO', 'BUC', 'X', '1', '49', 'ETICHETE', 'AUTOCOL', '1OFX9', '1', '49', 'A', '548049000037/1240476', '1', 'OOO', 'BUC', 'X 3,99', 'SERVETELE', 'UMED', '72BUC', 'M', '3 , 99', 'Â', '5213001215419/1238410', 'FotAL', '9e5', 'TOTAL-', 'TVA', '1', '56', 'Tva', 'A', '21', 'OO"', '1 , 56', 'CARD', 'Nr-', 'ART .', 'VANDUTE', '8 . 96', '2 6] 0 1', '1ro 2 T6', 'EJIRZ :', '00/11', 'I0', 'UNiu :', "O(Jt J4 , 1'  ))6 Y2t24 42151/472 >19' ,A0V1 1", 'BF', '00211', 'DATA: 10/10/20120', 'OFA : 1/-4/-23', '11', '7UUUS 19)EU)', 'E 0 N', 'F T s C ^ |']
 ```
+
+UPDATE: 
+
+I refactored the functions from preprocessing and tried the following approaches:
+- Approach 1: grayscale -> threshold -> cut -> resize -> OCR
+- Approach 2: grayscale -> threshold -> cut -> resize -> grayscale -> OCR
+- Approach 2: grayscale -> threshold -> cut -> resize -> grayscale -> Threshold -> OCR
+
+The result is that the best approach is the first one. The grayscale approach is not adding significant value. And the thresholding is far from the desired result.
+
 ## Resources 
 
 - [EasyOCR Documentation](https://www.jaided.ai/easyocr/)
