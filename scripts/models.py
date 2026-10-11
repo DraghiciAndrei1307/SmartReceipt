@@ -39,7 +39,10 @@ def create_ocr_model(image_path: str) -> list[dict]:
     for bbox, text, confidence in ocr_raw_result:
         ocr_model_list.append(
             {
-                "bbox": bbox,
+                "bbox": [
+                    [int(point[0]), int(point[1])]
+                    for point in bbox
+                ],
                 "text": text,
                 "confidence": float(confidence),
             }
