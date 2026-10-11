@@ -7,14 +7,14 @@
 
 import easyocr
 
-def ocr(image_path: str) -> str:
+def ocr(image_path: str) -> list:
     """Simple OCR function to extract text from an image"""
 
     # Define the Reader object
     reader = easyocr.Reader(['en', 'ro'])
 
     # Return the text extracted from the image_path
-    return reader.readtext(image_path, detail=0)
+    return reader.readtext(image_path)
 
 # if __name__ == "__main__":
 #     print(ocr("./input_images/image_2_starbucks.jpeg"))
