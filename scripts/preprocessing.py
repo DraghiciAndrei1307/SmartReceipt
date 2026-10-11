@@ -304,7 +304,7 @@ def cut(image_path: str):
 
     # Cut the raw image
     image = image[y:y+h, x:x+w]
-    _ = show_and_write_image(
+    cut_image_path = show_and_write_image(
         parent_folder_path=parent_folder_path,
         source_image_name=source_image_name,
         operation_applied="cut",
@@ -331,7 +331,13 @@ def cut(image_path: str):
         image=threshed
     )
 
-    return image
+    return image, cut_image_path
+
+def preprocess(image_path: str):
+    cut_image, cut_image_path = cut(image_path)
+    return resize(cut_image_path)
+
+
 
 if __name__ == '__main__':
 
