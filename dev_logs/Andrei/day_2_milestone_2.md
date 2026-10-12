@@ -1,4 +1,4 @@
-# DAY 1 (October 10, 2026)
+# DAY 1 (October 11, 2026)
 
 Ok, for the moment I am still at the cutting just the receipt out of the image. The thing is that I need to undestand 
 the Canny edge detection algorithm in order to do that...

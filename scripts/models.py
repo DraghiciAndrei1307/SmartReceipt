@@ -44,7 +44,7 @@ def create_ocr_model(image_path: str) -> list[dict]:
                     for point in bbox
                 ],
                 "text": text,
-                "confidence": float(confidence),
+                "confidence": round(float(confidence),2),
             }
         )
 
