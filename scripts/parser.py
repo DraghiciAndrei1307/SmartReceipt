@@ -91,6 +91,8 @@ def parser(ocr_model: list[dict]):
 
     print(full_receipt_text)
 
+    return full_receipt_text
+
 if __name__ == "__main__":
 
     model = create_ocr_model("./input_images/image_1_jumbo.jpeg")
