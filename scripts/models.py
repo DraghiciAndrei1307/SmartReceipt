@@ -19,7 +19,12 @@
 
 # ========================================================
 
-from scripts.preprocessing import preprocess
+from scripts.preprocessing import (
+    preprocess_using_thresholding,
+    preprocess_using_canny,
+    grayscale,
+    thresh
+)
 from scripts.ocr import ocr
 
 def create_ocr_model(image_path: str) -> list[dict]:
@@ -28,11 +33,20 @@ def create_ocr_model(image_path: str) -> list[dict]:
     The OCR model will help us create the parser.
     """
 
-    # Preprocess the image
-    cut_image = preprocess(image_path)
+    # PREPROCESS THE IMAGE  (GRAY -> THRESHOLDING -> CUT -> RESIZE)
+    (
+        preprocessed_image,
+        preprocessed_image_path
+    ) = preprocess_using_thresholding(image_path)
+
+    # PREPROCESS THE IMAGE (CANNY -> CUT -> RESIZE)
+    # (
+    #     preprocessed_image,
+    #     preprocessed_image_path
+    # ) = preprocess_using_canny(image_path)
 
     # Apply OCR
-    ocr_raw_result = ocr(cut_image)
+    ocr_raw_result = ocr(preprocessed_image_path)
 
     ocr_model_list = []
 

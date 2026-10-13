@@ -40,6 +40,13 @@ def parser(ocr_model: list[dict]):
     print("Left corners = " + str(upper_left_corner_values))
 
     # Compute the mean value
+    len_of_upper_left_corner_values = len(upper_left_corner_values)
+
+    mean = 0.0
+
+    if len_of_upper_left_corner_values == 0:
+        return "No valid bbox!"
+
     mean = round(float(sum_of_y_differences / len(upper_left_corner_values)), 2)
 
     # We will use this 60% out of the mean value because
