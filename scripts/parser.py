@@ -1,6 +1,6 @@
 # preprocessing -> ocr -> ocr model -> parser
 
-from models import create_ocr_model
+from scripts.models import create_ocr_model
 
 def parser(ocr_model: list[dict]):
     """

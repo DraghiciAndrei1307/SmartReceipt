@@ -1,9 +1,7 @@
 import re
-import json
 import ollama
-from schema import ReceiptSchema
-from models import create_ocr_model
-from parser import parser
+from scripts.models import create_ocr_model
+from scripts.parser import parser
 
 
 def clean_ocr_text_for_llm(text: str) -> str:
@@ -76,20 +74,6 @@ def use_ai_to_correct_text_and_generate_JSON(image_path: str):
 
 
     print("AI Response: " + ai_response_text)
-
-    # Validate the result using Pydantic
-    try:
-        # Create dictionary out of the json-formatted string
-        data_dict = json.loads(ai_response_text)
-
-        receipt_data = ReceiptSchema(**data_dict)
-        print("Validated Response: " + receipt_data.model_dump_json(indent=2))
-        return receipt_data
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
 
 if __name__ == "__main__":
     image_path = "./input_images/image_1_jumbo.jpeg"

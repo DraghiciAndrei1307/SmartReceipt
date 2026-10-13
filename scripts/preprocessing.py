@@ -1,6 +1,6 @@
 import cv2
 
-from ocr import ocr
+from scripts.ocr import ocr
 
 
 def extract_source_image_name_and_folder_path(image_path: str):

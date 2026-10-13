@@ -19,8 +19,8 @@
 
 # ========================================================
 
-from preprocessing import preprocess
-from ocr import ocr
+from scripts.preprocessing import preprocess
+from scripts.ocr import ocr
 
 def create_ocr_model(image_path: str) -> list[dict]:
     """
