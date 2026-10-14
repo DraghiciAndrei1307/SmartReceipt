@@ -34,19 +34,21 @@ def create_ocr_model(image_path: str) -> list[dict]:
     """
 
     # PREPROCESS THE IMAGE  (GRAY -> THRESHOLDING -> CUT -> RESIZE)
-    (
-        preprocessed_image,
-        preprocessed_image_path
-    ) = preprocess_using_thresholding(image_path)
-
-    # PREPROCESS THE IMAGE (CANNY -> CUT -> RESIZE)
     # (
     #     preprocessed_image,
     #     preprocessed_image_path
-    # ) = preprocess_using_canny(image_path)
+    # ) = preprocess_using_thresholding(image_path)
+
+    # PREPROCESS THE IMAGE (CANNY -> CUT -> RESIZE)
+    (
+        preprocessed_image,
+        preprocessed_image_path
+    ) = preprocess_using_canny(image_path)
 
     # Apply OCR
     ocr_raw_result = ocr(preprocessed_image_path)
+
+    print("OCR_RAW_RESULT: " + str(ocr_raw_result))
 
     ocr_model_list = []
 

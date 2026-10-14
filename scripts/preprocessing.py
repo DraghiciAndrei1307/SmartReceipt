@@ -87,8 +87,8 @@ def resize(image_path: str):
     resized_image = cv2.resize(
         image,
         dsize=None,
-        fx=3,
-        fy=1.5,
+        fx=2.5,
+        fy=2.5,
         interpolation=cv2.INTER_CUBIC
     )
 
@@ -235,6 +235,7 @@ def cut_using_thresholding(image_path: str):
     for contour in contours:
 
         # Approximate shape
+        # margin of error (epsilon) = 2% out of the perimeter
         epsilon = 0.02  * cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, epsilon, True)
 
@@ -277,8 +278,13 @@ def cut_using_thresholding(image_path: str):
     # Create a copy of the raw image and draw contours
     contour_image = image.copy()
     cv2.drawContours(contour_image, contours, -1, (0, 255, 0), 3)
-    cv2.imshow('Contours', contour_image)
-    cv2.waitKey(0)
+
+    _ = show_and_write_image(
+        parent_folder_path=parent_folder_path,
+        source_image_name=source_image_name,
+        operation_applied="draw_contours",
+        image=contour_image
+    )
 
     # Cut the raw image
     image = image[y:y+h, x:x+w]
@@ -321,9 +327,12 @@ def cut_using_canny(image_path: str):
 
     blurred = cv2.GaussianBlur(gray_image, (11, 11), 0)
 
-    cv2.imshow('Blurred', blurred)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    _ = show_and_write_image(
+        parent_folder_path=parent_folder_path,
+        source_image_name=source_image_name,
+        operation_applied="blurred",
+        image=blurred
+    )
 
     # Apply the Canny edge detection algorithm.
 
@@ -376,6 +385,7 @@ def cut_using_canny(image_path: str):
     for contour in contours:
 
         # Approximate shape
+        # margin of error (epsilon) = 2% out of the perimeter
         epsilon = 0.02  * cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, epsilon, True)
 

@@ -55,6 +55,8 @@ def use_ai_to_correct_text_and_generate_JSON(image_path: str):
     magazinului (numele firmei, adresa, CUI-ul, "CUTITARU", "POS/TRAN", etc.). 
     Lista de produse incepe abia dupa liniile cu articole/prețuri si 
     se termina inainte de "TOTAL" / "CARD". 
+    5) NU include in lista de produse ("items") randurile care contin
+    text precum "Buc X 1.49" sau "Buc X 3.99"
 
     Atentie stricta la structura JSON 
     pe care trebuie sa o returnezi:
