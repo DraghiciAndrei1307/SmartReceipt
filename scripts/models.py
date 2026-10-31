@@ -25,7 +25,8 @@ from scripts.preprocessing import (
     grayscale,
     thresh
 )
-from scripts.ocr import ocr
+from scripts.ocr import ocr, tesseract_ocr
+
 
 def create_ocr_model(image_path: str) -> list[dict]:
     """
@@ -34,19 +35,22 @@ def create_ocr_model(image_path: str) -> list[dict]:
     """
 
     # PREPROCESS THE IMAGE  (GRAY -> THRESHOLDING -> CUT -> RESIZE)
-    # (
-    #     preprocessed_image,
-    #     preprocessed_image_path
-    # ) = preprocess_using_thresholding(image_path)
-
-    # PREPROCESS THE IMAGE (CANNY -> CUT -> RESIZE)
     (
         preprocessed_image,
         preprocessed_image_path
-    ) = preprocess_using_canny(image_path)
+    ) = preprocess_using_thresholding(image_path)
 
-    # Apply OCR
-    ocr_raw_result = ocr(preprocessed_image_path)
+    # PREPROCESS THE IMAGE (CANNY -> CUT -> RESIZE)
+    # (
+    #     preprocessed_image,
+    #     preprocessed_image_path
+    # ) = preprocess_using_canny(image_path)
+
+    # Apply EasyOCR
+    #ocr_raw_result = ocr(preprocessed_image_path)
+
+    # Apply Tesseract
+    ocr_raw_result = tesseract_ocr(preprocessed_image_path)
 
     print("OCR_RAW_RESULT: " + str(ocr_raw_result))
 
