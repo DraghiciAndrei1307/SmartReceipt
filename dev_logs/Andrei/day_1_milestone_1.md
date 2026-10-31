@@ -72,7 +72,7 @@ The result is not concludent...
 ['4', '3', '1 ;', '5', '2', '2', '29', '5', '8adase:', '72522883088', '8', '5', '185|2 2', '8f', '3', ';;', '2', 'ș', '2', '4', '5', '595', 'g', '1', '8', '8h', '2', '5', '2', '2', '33', '5', 'g', '889', '1', '5', '1', ';', '8', '888', 'N', 'N', '5', '8', 'ș', '1', '1', '0', 'D', '1', '4', '4', '3', '2', '1', 'ș', '1', '2', 'E2lf', '5', '9', ';', '1', '2', '1', '2', 'E', '2', '8', '2', '4', '2', '5', '91', '5', '3', '8', '9', '8', '[', 'g,2', '38', '0', '2', '2', '8', '5', '5', '28', '{', ';', '4', '2', '8', '~'
 ```
 
-Next step was to try with a more clear image [image_2_starbucks.jpeg](../../input_images/image_2_starbucks.jpeg). 
+Next step was to try with a more clear image [image_2_starbucks.jpeg](../../dataset/images/image_2_starbucks.jpeg). 
 The result was the following:
 
 ```commandline

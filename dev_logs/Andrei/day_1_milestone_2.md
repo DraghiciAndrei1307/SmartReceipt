@@ -28,7 +28,7 @@ def ocr(image_path: str) -> str:
 
 The following steps were performed:
 - Apply OCR on the basic image
-- Rotate the [image_1_starbucks.jpeg](../../input_images/image_1_starbucks.jpeg) 90 degrees counter clockwise. 
+- Rotate the [image_1_starbucks.jpeg](../../dataset/images/image_1_starbucks.jpeg) 90 degrees counter clockwise. 
 - Apply [OCR function](../../scripts/ocr.py) on the [image_1_starbucks_rotated_90_counter_clockwise.jpeg](../../input_images/image_1_starbucks_rotated_90_counter_clockwise.jpeg) 
 - Resize the rotated image [image_1_starbucks_rotated_90_counter_clockwise](../../input_images/image_1_starbucks_rotated_90_counter_clockwise.jpeg)
 - Apply OCR function on the [resized_image](../../input_images/resized_image.jpeg)

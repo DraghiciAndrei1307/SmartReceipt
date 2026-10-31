@@ -19,12 +19,7 @@
 
 # ========================================================
 
-from scripts.preprocessing import (
-    preprocess_using_thresholding,
-    preprocess_using_canny,
-    grayscale,
-    thresh
-)
+from scripts.receipt_preprocessor import ReceiptPreprocessor
 from scripts.ocr import ocr, tesseract_ocr
 
 
@@ -34,11 +29,13 @@ def create_ocr_model(image_path: str) -> list[dict]:
     The OCR model will help us create the parser.
     """
 
+    receipt_preprocessor_instance = ReceiptPreprocessor()
+
     # PREPROCESS THE IMAGE  (GRAY -> THRESHOLDING -> CUT -> RESIZE)
     (
         preprocessed_image,
         preprocessed_image_path
-    ) = preprocess_using_thresholding(image_path)
+    ) = receipt_preprocessor_instance.preprocess_using_thresholding(image_path)
 
     # PREPROCESS THE IMAGE (CANNY -> CUT -> RESIZE)
     # (
