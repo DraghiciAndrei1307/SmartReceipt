@@ -1,10 +1,14 @@
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Tuple
 
 import cv2
 import numpy as np
 from cv2 import Mat
 
+
+# =================================================
+#           RECEIPT PREPROCESSOR CLASS...
+# =================================================
 
 class ReceiptPreprocessor:
     """
@@ -26,11 +30,17 @@ class ReceiptPreprocessor:
       ReceiptPreprocessor(show_images=True)
     """
 
+    # =========================================================
+    #           __INIT__...
+    # =========================================================
     def __init__(self, show_images: bool = False, save_debug_images: bool = True):
         self.show_images = show_images
         self.save_debug_images = save_debug_images
         self.factory = self.OperationFactory(self)
 
+    # =========================================================
+    #           EXTRACT SOURCE IMAGE NAME AND FOLDER PATH...
+    # =========================================================
     @staticmethod
     def extract_source_image_name_and_folder_path(
         image_path: str
@@ -38,6 +48,9 @@ class ReceiptPreprocessor:
         path = Path(image_path)
         return path.name, str(path.parent)
 
+    # =================================================
+    #           _READ_IMAGE METHOD...
+    # =================================================
     @staticmethod
     def _read_image(image_path: str, flags: int = cv2.IMREAD_COLOR) -> Mat:
         image = cv2.imread(str(image_path), flags)
@@ -45,6 +58,9 @@ class ReceiptPreprocessor:
             raise FileNotFoundError(f"Imaginea nu a putut fi citita: {image_path}")
         return image
 
+    # =================================================
+    #           SHOW AND WRITE IMAGE METHOD...
+    # =================================================
     def show_and_write_image(
         self,
         parent_folder_path: str,
@@ -73,10 +89,16 @@ class ReceiptPreprocessor:
 
         return str(result_image_path)
 
+    # =================================================
+    #           _SAVE_RESULT METHOD...
+    # =================================================
     def _save_result(self, image_path: str, operation: str, image: Mat) -> str:
         name, folder = self.extract_source_image_name_and_folder_path(image_path)
         return self.show_and_write_image(folder, name, operation, image)
 
+    # =================================================
+    #           PROCESS RECEIPT METHOD...
+    # =================================================
     def process_receipt(
         self,
         operation_applied: str,
@@ -87,6 +109,9 @@ class ReceiptPreprocessor:
             image_path=image_path
         )
 
+    # =================================================
+    #           APPLY OTSU THRESHOLDING METHOD...
+    # =================================================
     def apply_otsu_thresholding(self, image_path: str) -> Tuple[Mat, str]:
         gray = self.factory.grayscale(image_path)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -96,12 +121,18 @@ class ReceiptPreprocessor:
         path = self._save_result(image_path, "otsu_thresholding", thresholded)
         return thresholded, path
 
+    # =================================================
+    #           APPLY ADAPTIVE THRESHOLDING METHOD...
+    # =================================================
     def apply_adaptive_thresholding(self, image_path: str) -> Tuple[Mat, str]:
         gray = self.factory.grayscale(image_path)
         thresholded = self.factory.adaptive_thresholding_from_array(gray)
         path = self._save_result(image_path, "adaptive_thresholding", thresholded)
         return thresholded, path
 
+    # =================================================
+    #           CUT USING THRESHOLDING METHOD...
+    # =================================================
     def cut_using_thresholding(self, image_path: str) -> Tuple[Mat, str]:
         warped, warped_path = self.factory.operation(
             operation_applied=self.factory.WARP,
@@ -113,6 +144,9 @@ class ReceiptPreprocessor:
         )
         return resized, resized_path
 
+    # =================================================
+    #           PREPROCESS USING THRESHOLDING METHOD...
+    # =================================================
     def preprocess_using_thresholding(self, image_path: str) -> Tuple[Mat, str]:
         """
         Corecteaza perspectiva, apoi mareste bonul pentru OCR.
@@ -120,7 +154,12 @@ class ReceiptPreprocessor:
         """
         return self.cut_using_thresholding(image_path)
 
+    # =================================================
+    #           OPERATION FACTORY METHOD...
+    # =================================================
     class OperationFactory:
+
+        # ATTRIBUTES...
         RESIZE = "resize"
         GRAYSCALE = "grayscale"
         GAUSSIAN_BLUR = "gaussian_blur"
@@ -131,14 +170,23 @@ class ReceiptPreprocessor:
         WARP = "warp"
         DESKEW = "deskew"
 
+        # =========================================================
+        #           __INIT__...
+        # =========================================================
         def __init__(self, outer_instance):
             self.outer = outer_instance
 
+        # =========================================================
+        #           OPERATION METHOD...
+        # =========================================================
         def operation(
             self,
             operation_applied: str,
             image_path: str
         ) -> Tuple[Mat, str]:
+            """Factory method used for choosing the right operation..."""
+
+            # Dictionary of operations
             operations = {
                 self.RESIZE: self.resize,
                 self.GRAYSCALE: self.grayscale,
@@ -151,27 +199,55 @@ class ReceiptPreprocessor:
                 self.DESKEW: self.deskew,
             }
 
+            # Check if the operation exists in our dictionary...
             if operation_applied not in operations:
                 raise ValueError(
-                    f"Operatie necunoscuta: {operation_applied}. "
-                    f"Operatii disponibile: {', '.join(operations)}"
+                    f"UNKNOWN OPERATION: {operation_applied}. "
+                    f"AVAILABLE OPERATIONS: {', '.join(operations)}"
                 )
 
+            # Apply operation
             result_image = operations[operation_applied](image_path)
+
+            # Save results and return the path...
             result_path = self.outer._save_result(
                 image_path, operation_applied, result_image
             )
+
+            # Return the result image and its path...
             return result_image, result_path
 
+        # =========================================================
+        #           READ GRAY METHOD...
+        # =========================================================
         @staticmethod
         def _read_gray(image_path: str) -> Mat:
+            """
+            This method is used for reading the image using the
+            GRAYSCALE filter...
+            """
+
+            # Read the image...
             image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
+
+            # Check if the image is None...
             if image is None:
                 raise FileNotFoundError(f"Imaginea nu a putut fi citita: {image_path}")
+
             return image
 
+        # =========================================================
+        #           RESIZE METHOD...
+        # =========================================================
         def resize(self, image_path: str) -> Mat:
+            """
+            This method is used for resizing the image.
+            """
+
+            # Read the image using the GRAYSCALE filter.
             gray = self._read_gray(image_path)
+
+            # Resize and return the result image...
             return cv2.resize(
                 gray,
                 dsize=None,
@@ -180,55 +256,121 @@ class ReceiptPreprocessor:
                 interpolation=cv2.INTER_CUBIC
             )
 
+        # =========================================================
+        #           GRAYSCALE METHOD...
+        # =========================================================
         def grayscale(self, image_path: str) -> Mat:
+            """
+            This method is used for applying the GRAYSCALE filter
+            over the image.
+            """
+
             return self._read_gray(image_path)
 
+        # =========================================================
+        #           GAUSSIAN BLUR METHOD...
+        # =========================================================
         def gaussian_blur(self, image_path: str) -> Mat:
+            """
+            This method is used for applying the
+            Gaussian blur filter.
+            """
+
+            # Apply GRAYSCALE...
             gray = self._read_gray(image_path)
+
+            # Apply Gaussian Blur and return the resulted image
             return cv2.GaussianBlur(gray, (5, 5), 0)
 
+        # =========================================================
+        #           *DYNAMIC GAUSSIAN BLUR METHOD...
+        # =========================================================
         def dynamic_gaussian_blur(self, image_path: str) -> Mat:
+            """
+            This method is used for applying the Gaussian blur filter,
+            but this time we give dynamically set parameters...
+            """
+
+            # Apply GRAYSCALE...
             gray = self._read_gray(image_path)
+
+            # Get the height and the width...
             h, w = gray.shape[:2]
+
+            # Compute the kernel window size...
             kernel_size = max(3, min(int(w * 0.015) | 1, 31))
+
+            # Apply GAUSSIAN BLUR and return the resulted image...
             return cv2.GaussianBlur(gray, (kernel_size, kernel_size), 0)
 
+        # =========================================================
+        #           REMOVE SHADOWS AND TEXTURE METHOD...
+        # =========================================================
         def remove_shadows_and_texture(self, image_path: str) -> Mat:
             """
             Normalizeaza iluminarea local, apoi reduce textura de fundal.
             Este o operatie optionala; nu este folosita la detectia colturilor.
             """
+
+            # Read image in GRAYSCALE...
             gray = self._read_gray(image_path)
+
+            # Get the height and the width...
             h, w = gray.shape[:2]
 
+            # Compute the grid...
             grid = max(4, min(16, int(min(w, h) / 100)))
+
+            # Create the CLAHE window...
             clahe = cv2.createCLAHE(
                 clipLimit=2.0,
                 tileGridSize=(grid, grid)
             )
+
+            # Apply CLAHE...
             normalized = clahe.apply(gray)
 
+            # Compute the kernel size...
             kernel_size = max(15, (int(min(h, w) * 0.04) | 1))
             kernel_size = min(kernel_size, 61)
+
             background_kernel = cv2.getStructuringElement(
                 cv2.MORPH_RECT, (kernel_size, kernel_size)
             )
+
             background = cv2.morphologyEx(
                 normalized, cv2.MORPH_CLOSE, background_kernel
             )
+
             corrected = cv2.divide(
                 normalized, background, scale=255
             )
+
             return corrected
 
+        # =========================================================
+        #           OTSU THRESHOLDING METHOD...
+        # =========================================================
         def otsu_thresholding(self, image_path: str) -> Mat:
+            """
+            This method is used for applying the OTSU thresholding...
+            """
+
+            # Read image using GRAYSCALE...
             gray = self._read_gray(image_path)
+
+            # Apply GAUSSIAN BLUR....
             blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+
+            # Apply OTSU thresholding and return the resulted image...
             return cv2.threshold(
                 blurred, 0, 255,
                 cv2.THRESH_BINARY + cv2.THRESH_OTSU
             )[1]
 
+        # =========================================================
+        #           ADAPTIVE THRESHOLDING FROM ARRAY METHOD...
+        # =========================================================
         @staticmethod
         def adaptive_thresholding_from_array(gray: Mat) -> Mat:
             blurred = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -248,10 +390,16 @@ class ReceiptPreprocessor:
                 C=12
             )
 
+        # =========================================================
+        #           ADAPTIVE THRESHOLDING METHOD...
+        # =========================================================
         def adaptive_thresholding(self, image_path: str) -> Mat:
             gray = self._read_gray(image_path)
             return self.adaptive_thresholding_from_array(gray)
 
+        # =========================================================
+        #           ORDER POINTS METHOD...
+        # =========================================================
         @staticmethod
         def order_points(points: np.ndarray) -> np.ndarray:
             """
@@ -270,6 +418,9 @@ class ReceiptPreprocessor:
             ordered[3] = points[np.argmax(differences)]  # bottom-left
             return ordered
 
+        # =========================================================
+        #           CANDIDATE SCORE METHOD...
+        # =========================================================
         @staticmethod
         def _candidate_score(contour: np.ndarray, image_shape) -> float:
             h, w = image_shape[:2]
@@ -295,6 +446,9 @@ class ReceiptPreprocessor:
 
             return (area / image_area) * border_penalty
 
+        # =========================================================
+        #           FIND RECEIPT CONTOUR METHOD...
+        # =========================================================
         def _find_receipt_contour(self, color_image: Mat) -> np.ndarray:
             """
             Detecteaza conturul bonului.
@@ -357,7 +511,7 @@ class ReceiptPreprocessor:
                 edges, cv2.MORPH_CLOSE, close_kernel, iterations=2
             )
 
-            adaptive = self.adaptive_thresholding_from_array(gray)
+            # adaptive = self.adaptive_thresholding_from_array(gray)
             # Bonul este mai deschis decat masa; combinam muchiile cu
             # componentele luminoase pentru a inchide mai bine conturul.
             light_regions = cv2.threshold(
@@ -385,6 +539,9 @@ class ReceiptPreprocessor:
 
             return max(scored, key=lambda item: item[0])[1]
 
+        # =========================================================
+        #           EXTRACT FOUR CORNERS METHOD...
+        # =========================================================
         def _extract_four_corners(self, contour: np.ndarray) -> np.ndarray:
             """
             Incearca sa obtina un patrulater din contur.
@@ -405,6 +562,9 @@ class ReceiptPreprocessor:
             box = cv2.boxPoints(rect)
             return self.order_points(box)
 
+        # =========================================================
+        #           PERSPECTIVE WARP METHOD...
+        # =========================================================
         @staticmethod
         def _perspective_warp(image: Mat, corners: np.ndarray) -> Mat:
             tl, tr, br, bl = corners
@@ -444,6 +604,9 @@ class ReceiptPreprocessor:
                 borderValue=255
             )
 
+        # =========================================================
+        #           WARP RECEIPT METHOD...
+        # =========================================================
         def warp_receipt(self, image_path: str) -> Mat:
             """
             Detecteaza bonul in fotografia color si aplica transformarea
@@ -453,15 +616,23 @@ class ReceiptPreprocessor:
             originale; nu adaugam padding inainte de detectie si nu aplicam
             warp pe imaginea threshold, ci pe imaginea grayscale.
             """
+
+            # Read the image...
             color_image = self.outer._read_image(
                 image_path, cv2.IMREAD_COLOR
             )
+
+            # Apply GRAYSCALE
             gray_image = cv2.cvtColor(
                 color_image, cv2.COLOR_BGR2GRAY
             )
 
+            # Get the contour of the receipt...
             contour = self._find_receipt_contour(color_image)
+
+            # Extract its corners...
             corners = self._extract_four_corners(contour)
+
 
             if self.outer.save_debug_images:
                 debug = color_image.copy()
@@ -484,6 +655,9 @@ class ReceiptPreprocessor:
             # aplica separat, in functie de cerintele OCR-ului.
             return warped
 
+        # =========================================================
+        #           DESKEW METHOD...
+        # =========================================================
         def deskew(self, image_path: str) -> Mat:
             gray = self._read_gray(image_path)
             _, binary = cv2.threshold(
