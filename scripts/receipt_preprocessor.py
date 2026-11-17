@@ -373,14 +373,26 @@ class ReceiptPreprocessor:
         # =========================================================
         @staticmethod
         def adaptive_thresholding_from_array(gray: Mat) -> Mat:
+            """
+            This method is used for applying the adaptive
+            thresholding from array...
+            """
+
+            # Apply GAUSSIAN BLUR...
             blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+
+            # Height and width...
             h, w = blurred.shape[:2]
 
+            # Compute the block size...
             block_size = int(min(w, h) * 0.025)
             block_size = max(11, min(block_size | 1, 99))
+
             if block_size % 2 == 0:
                 block_size += 1
 
+            # Apply the adaptive thresholding and
+            # return the resulted image...
             return cv2.adaptiveThreshold(
                 blurred,
                 255,
@@ -394,22 +406,36 @@ class ReceiptPreprocessor:
         #           ADAPTIVE THRESHOLDING METHOD...
         # =========================================================
         def adaptive_thresholding(self, image_path: str) -> Mat:
+            """
+            This method applies the adaptive thresholding...
+            """
+
+            # Grayscale...
             gray = self._read_gray(image_path)
+
+            # Apply the adaptive thresholding and
+            # return the resulted image...
             return self.adaptive_thresholding_from_array(gray)
 
         # =========================================================
-        #           ORDER POINTS METHOD...
+        #           *ORDER POINTS METHOD...
         # =========================================================
         @staticmethod
         def order_points(points: np.ndarray) -> np.ndarray:
             """
-            Ordoneaza patru puncte: stanga-sus, dreapta-sus,
-            dreapta-jos, stanga-jos.
+            This method orders 4 points/corners: upper-left, upper-right,
+            lower-right, lower-left...
             """
+
+            # Get the points...
             points = np.asarray(points, dtype=np.float32).reshape(4, 2)
+
+            # Create a zeroes array...
             ordered = np.zeros((4, 2), dtype=np.float32)
 
+            # Compute the sum on each row...
             sums = points.sum(axis=1)
+
             differences = np.diff(points, axis=1).reshape(-1)
 
             ordered[0] = points[np.argmin(sums)]       # top-left
