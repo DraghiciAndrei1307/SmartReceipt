@@ -19,9 +19,17 @@
 
 # ========================================================
 
-from scripts.receipt_preprocessor import ReceiptPreprocessor
-from scripts.ocr import ocr, tesseract_ocr
+# =================================================
+#           IMPORTS...
+# =================================================
 
+from scripts.receipt_preprocessor import ReceiptPreprocessor
+from scripts.ocr import tesseract_ocr
+#from scripts.ocr import ocr
+
+# =================================================
+#           CREATE OCR MODEL FUNCTION...
+# =================================================
 
 def create_ocr_model(image_path: str) -> list[dict]:
     """
@@ -29,25 +37,36 @@ def create_ocr_model(image_path: str) -> list[dict]:
     The OCR model will help us create the parser.
     """
 
+    # Create an instance of the ReceiptPreprocessor class...
     receipt_preprocessor_instance = ReceiptPreprocessor()
 
-    # PREPROCESS THE IMAGE  (GRAY -> THRESHOLDING -> CUT -> RESIZE)
-    (
-        preprocessed_image,
-        preprocessed_image_path
-    ) = receipt_preprocessor_instance.preprocess_using_thresholding(image_path)
+    # APPLY WARPING (on the original gray image)
+    warped_image, warped_image_path = receipt_preprocessor_instance.factory.operation(
+        operation_applied=receipt_preprocessor_instance.factory.WARP,
+        image_path="./input_images/image_1_lidl.jpeg"
+    )
 
-    # PREPROCESS THE IMAGE (CANNY -> CUT -> RESIZE)
-    # (
-    #     preprocessed_image,
-    #     preprocessed_image_path
-    # ) = preprocess_using_canny(image_path)
+    # DESKEW IMAGE...
+    _, deskew_path = receipt_preprocessor_instance.factory.operation(
+        operation_applied=receipt_preprocessor_instance.factory.DESKEW,
+        image_path=warped_image_path
+    )
 
-    # Apply EasyOCR
-    #ocr_raw_result = ocr(preprocessed_image_path)
+    # RESIZE IMAGE...
+    _, resized_image_path = receipt_preprocessor_instance.factory.operation(
+        operation_applied=receipt_preprocessor_instance.factory.RESIZE,
+        image_path=deskew_path
+    )
+
+    # APPLY ADAPTIVE THRESHOLDING...
+
+    _, thresholded_image_path = receipt_preprocessor_instance.factory.operation(
+        operation_applied=receipt_preprocessor_instance.factory.ADAPTIVE_THRESHOLDING,
+        image_path=resized_image_path
+    )
 
     # Apply Tesseract
-    ocr_raw_result = tesseract_ocr(preprocessed_image_path)
+    ocr_raw_result = tesseract_ocr(thresholded_image_path)
 
     print("OCR_RAW_RESULT: " + str(ocr_raw_result))
 

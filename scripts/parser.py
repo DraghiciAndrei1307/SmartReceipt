@@ -1,8 +1,15 @@
 # preprocessing -> ocr -> ocr model -> parser
 
+# =================================================
+#           IMPORTS...
+# =================================================
 from scripts.models import create_ocr_model
 
-def parser(ocr_model: list[dict]):
+# =================================================
+#           MODEL PARSER FUNCTION...
+# =================================================
+
+def ocr_model_parser(ocr_model: list[dict]):
     """
     This function parses the OCR model returned
     from the create_ocr_model function.
@@ -104,4 +111,4 @@ if __name__ == "__main__":
 
     model = create_ocr_model("./input_images/image_1_jumbo.jpeg")
 
-    parser(model)
+    ocr_model_parser(model)

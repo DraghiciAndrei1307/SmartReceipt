@@ -308,8 +308,10 @@ class ReceiptPreprocessor:
         # =========================================================
         def remove_shadows_and_texture(self, image_path: str) -> Mat:
             """
-            Normalizeaza iluminarea local, apoi reduce textura de fundal.
-            Este o operatie optionala; nu este folosita la detectia colturilor.
+            This method normalizes the local illumination and then reduces
+            the background texture.
+
+            This is an optional operation adn it is not used for edge detection...
             """
 
             # Read image in GRAYSCALE...
@@ -477,12 +479,13 @@ class ReceiptPreprocessor:
         # =========================================================
         def _find_receipt_contour(self, color_image: Mat) -> np.ndarray:
             """
-            Detecteaza conturul bonului.
+            Detect the receipt contour.
 
-            Pentru fotografii cu bon alb/albastrui pe masa din lemn,
-            separa in primul rand hartia dupa nuanta/saturatie HSV.
-            Daca metoda color nu gaseste un candidat, incearca o detectie
-            bazata pe muchii si prag adaptiv.
+            For images that contain a white/blue receipt on a wooden
+            table, we use HSV to separate the paper after saturation...
+
+            If we cannot find a candidate, use a detection based on edges
+            and adaptive threshold as a fallback...
             """
             h, w = color_image.shape[:2]
             hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
@@ -570,9 +573,10 @@ class ReceiptPreprocessor:
         # =========================================================
         def _extract_four_corners(self, contour: np.ndarray) -> np.ndarray:
             """
-            Incearca sa obtina un patrulater din contur.
-            Daca aproximarea nu are exact 4 puncte, foloseste convex hull
-            si minAreaRect ca fallback geometric.
+            Try to get the contour...
+
+            If the approx. does not contain 4 corners, use convex hull and
+            minAreaRect as geometric fallback...
             """
             perimeter = cv2.arcLength(contour, True)
 
@@ -593,6 +597,9 @@ class ReceiptPreprocessor:
         # =========================================================
         @staticmethod
         def _perspective_warp(image: Mat, corners: np.ndarray) -> Mat:
+            """
+            Apply the perspective warp...
+            """
             tl, tr, br, bl = corners
 
             width_top = np.linalg.norm(tr - tl)
@@ -606,8 +613,10 @@ class ReceiptPreprocessor:
             if output_width < 20 or output_height < 20:
                 raise ValueError("Colturile detectate produc o zona prea mica.")
 
-            # Bonul este portret in mod normal. Nu fortam rotirea daca
-            # fotografia contine un bon landscape.
+
+            # The receipt should have the 'portrait' orientation...
+            # We do not force the rotation if the receipt has
+            # landscape orientation...
             destination = np.array(
                 [
                     [0, 0],
@@ -635,12 +644,13 @@ class ReceiptPreprocessor:
         # =========================================================
         def warp_receipt(self, image_path: str) -> Mat:
             """
-            Detecteaza bonul in fotografia color si aplica transformarea
-            perspective imaginii grayscale originale.
+            Detect the receipt from the color image and apply the
+            perspective transform over the grayscaled image...
 
-            Important: punctele sunt detectate in coordonatele imaginii
-            originale; nu adaugam padding inainte de detectie si nu aplicam
-            warp pe imaginea threshold, ci pe imaginea grayscale.
+            Important: The detected cooordinates are in the original
+            image space; we do not add padding before detection
+            and we do not warp over thresholded image, but over the
+            grayscaled image...
             """
 
             # Read the image...
@@ -677,21 +687,32 @@ class ReceiptPreprocessor:
 
             warped = self._perspective_warp(gray_image, corners)
 
-            # Imaginea corectata ramane grayscale. Thresholding-ul se poate
-            # aplica separat, in functie de cerintele OCR-ului.
+            # The final image remains on grayscale...
+            # The thresholding can be applied after...this depends
+            # on the OCR requirements...
+
             return warped
 
         # =========================================================
         #           DESKEW METHOD...
         # =========================================================
         def deskew(self, image_path: str) -> Mat:
+            """
+            This method is used to change the receipt orientation
+            so that we can have a 'portrait' like orientation...
+            """
+
+            # GRAYSCALE...
             gray = self._read_gray(image_path)
+
+            # THRESHOLDING...
             _, binary = cv2.threshold(
                 gray, 0, 255,
                 cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
             )
 
             coordinates = np.column_stack(np.where(binary > 0))
+
             if len(coordinates) < 10:
                 return gray
 
@@ -713,7 +734,7 @@ class ReceiptPreprocessor:
                 center, angle, 1.0
             )
 
-            # Extindem canvas-ul ca sa nu taiem colturile la rotire.
+            # Extend the canvas to cut the corners at rotation...
             cos_value = abs(rotation_matrix[0, 0])
             sin_value = abs(rotation_matrix[0, 1])
             new_w = int((h * sin_value) + (w * cos_value))

@@ -1,11 +1,18 @@
+"""This module contains the final step...the AI execution..."""
+
+# ====================================================
+#           IMPORTS...
+# ====================================================
 import re
 import ollama
 import json
 from scripts.models import create_ocr_model
-from scripts.parser import parser
-
+from scripts.parser import ocr_model_parser
 from scripts.schema import ReceiptSchema
 
+# ======================================================
+#           CLEAN THE OCR TEXT BEFORE LLM ANALYSIS...
+# ======================================================
 def clean_ocr_text_for_llm(text: str) -> str:
     """
     Clean the OCR text.
@@ -20,11 +27,14 @@ def clean_ocr_text_for_llm(text: str) -> str:
     return text
 
 
+# ======================================================
+#           EXECUTE LLM ANALYSIS AND GENERATE JSON...
+# ======================================================
 def use_ai_to_correct_text_and_generate_JSON(image_path: str):
 
     # Run OCR and parse the output received from the OCR
     ocr_model = create_ocr_model(image_path)
-    raw_ocr_text = parser(ocr_model)
+    raw_ocr_text = ocr_model_parser(ocr_model)
 
     if raw_ocr_text is None:
         raw_ocr_text = ""
