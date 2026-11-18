@@ -56,13 +56,26 @@ def apply_otsu_thresholding(image_path: str) -> str:
 def demo_1():
     #use_ai_to_correct_text_and_generate_JSON("./input_images/image_1_lidl.jpeg")
 
-    # APPLY WARPING (on the original gray image)
     receipt_preprocessor_instance = ReceiptPreprocessor()
 
+    # APPLY WARPING (on the original gray image)
     warped_image, warped_image_path = receipt_preprocessor_instance.factory.operation(
         operation_applied=receipt_preprocessor_instance.factory.WARP,
         image_path="./input_images/image_1_lidl.jpeg"
     )
+
+    # DESKEW IMAGE...
+    _, deskew_path = receipt_preprocessor_instance.factory.operation(
+        operation_applied=receipt_preprocessor_instance.factory.DESKEW,
+        image_path=warped_image_path
+    )
+
+    # RESIZE IMAGE...
+    _, final_image_path = receipt_preprocessor_instance.factory.operation(
+        operation_applied=receipt_preprocessor_instance.factory.RESIZE,
+        image_path=deskew_path
+    )
+
 
 
 # =================================================
